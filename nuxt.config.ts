@@ -21,4 +21,14 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  routes: [
+    {
+      path: '/',
+      component: '~/pages/index.vue'
+    },
+    {
+      path: '/about',
+      component: '~/pages/about.vue'
+    }
+  ]
 })
