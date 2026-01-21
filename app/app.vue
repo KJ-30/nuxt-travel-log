@@ -25,7 +25,9 @@
     </header>
 
     <main class="container mx-auto p-4">
-      <NuxtPage />
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
     </main>
 
     <footer class="footer footer-center p-4 bg-base-300 text-base-content">
