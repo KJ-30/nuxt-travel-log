@@ -8,7 +8,8 @@
     "dev:db": "npx turso dev --db-file local.db",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@libsql/client": "^0.17.0",
