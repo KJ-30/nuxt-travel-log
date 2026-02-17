@@ -6,7 +6,7 @@
   :root {
     color-scheme: light;
   }
-  
+
   [data-theme="dark"]:root {
     color-scheme: dark;
   }

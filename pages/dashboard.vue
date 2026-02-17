@@ -1,7 +1,39 @@
+<script setup>
+const authStore = useAuthStore();
+const { data: locations, pending, refresh } = await useFetch("/api/locations");
+
+const locationToDelete = ref({ id: null, name: "" });
+const deleting = ref(false);
+
+function deleteLocation(id, name) {
+  locationToDelete.value = { id, name }
+  document.getElementById('delete_modal').showModal()
+}
+
+async function confirmDelete() {
+  deleting.value = true
+  try {
+    await $fetch(`/api/locations/${locationToDelete.value.id}`, { method: 'DELETE' })
+    refresh()
+    document.getElementById('delete_modal').close()
+  }
+  catch (error) {
+    console.error('Failed to delete location:', error)
+  }
+  finally {
+    deleting.value = false
+  }
+}
+
+definePageMeta({
+  middleware: ["auth"]
+});
+</script>
+
 <template>
   <div class="min-h-screen bg-base-200">
     <div class="drawer lg:drawer-open">
-      <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+      <input id="my-drawer-2" type="checkbox" class="drawer-toggle">
       <div class="drawer-content flex flex-col">
         <div class="navbar bg-base-100 shadow-sm">
           <div class="flex-none lg:hidden">
@@ -22,13 +54,17 @@
 
         <div class="flex-1 p-6">
           <div v-if="pending" class="flex justify-center items-center h-64">
-            <span class="loading loading-spinner loading-lg"></span>
+            <span class="loading loading-spinner loading-lg" />
           </div>
 
           <div v-else-if="locations.length === 0" class="flex flex-col items-center justify-center h-64">
             <Icon name="tabler:map-pin" size="64" class="text-base-content/30 mb-4" />
-            <h3 class="text-xl font-semibold mb-2">No locations yet</h3>
-            <p class="text-base-content/60 mb-4">Start by adding your first travel location</p>
+            <h3 class="text-xl font-semibold mb-2">
+              No locations yet
+            </h3>
+            <p class="text-base-content/60 mb-4">
+              Start by adding your first travel location
+            </p>
             <NuxtLink to="/locations/new" class="btn btn-primary">
               <Icon name="tabler:plus" size="18" />
               Add Location
@@ -64,7 +100,7 @@
         </div>
       </div>
       <div class="drawer-side">
-        <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
+        <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay" />
         <ul class="menu p-4 w-80 min-h-full bg-base-200">
           <li>
             <NuxtLink to="/dashboard" class="flex items-center gap-2">
@@ -78,7 +114,7 @@
               Locations
             </NuxtLink>
           </li>
-          <div class="divider"></div>
+          <div class="divider" />
           <li>
             <NuxtLink to="/locations/new" class="flex items-center gap-2">
               <Icon name="tabler:plus" size="20" />
@@ -91,14 +127,20 @@
 
     <dialog id="delete_modal" class="modal">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">Delete Location</h3>
-        <p class="py-4">Are you sure you want to delete "{{ locationToDelete.name }}"? This will also delete all logs and images associated with this location.</p>
+        <h3 class="font-bold text-lg">
+          Delete Location
+        </h3>
+        <p class="py-4">
+          Are you sure you want to delete "{{ locationToDelete.name }}"? This will also delete all logs and images associated with this location.
+        </p>
         <div class="modal-action">
           <form method="dialog">
-            <button class="btn">Cancel</button>
+            <button class="btn">
+              Cancel
+            </button>
           </form>
           <button class="btn btn-error" @click="confirmDelete">
-            <span v-if="deleting" class="loading loading-spinner loading-sm"></span>
+            <span v-if="deleting" class="loading loading-spinner loading-sm" />
             Delete
           </button>
         </div>
@@ -109,33 +151,3 @@
     </dialog>
   </div>
 </template>
-
-<script setup>
-const authStore = useAuthStore();
-const { data: locations, pending, refresh } = await useFetch("/api/locations");
-
-const locationToDelete = ref({ id: null, name: "" });
-const deleting = ref(false);
-
-const deleteLocation = (id, name) => {
-  locationToDelete.value = { id, name };
-  document.getElementById("delete_modal").showModal();
-};
-
-const confirmDelete = async () => {
-  deleting.value = true;
-  try {
-    await $fetch(`/api/locations/${locationToDelete.value.id}`, { method: "DELETE" });
-    refresh();
-    document.getElementById("delete_modal").close();
-  } catch (error) {
-    console.error("Failed to delete location:", error);
-  } finally {
-    deleting.value = false;
-  }
-};
-
-definePageMeta({
-  middleware: ["auth"]
-});
-</script>

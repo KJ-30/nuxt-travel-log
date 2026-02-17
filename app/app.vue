@@ -1,3 +1,20 @@
+<script setup>
+import { onMounted, ref } from "vue";
+
+const currentTheme = ref("light");
+
+function setTheme(theme) {
+  currentTheme.value = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+}
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem("theme") || "light";
+  setTheme(savedTheme)
+});
+</script>
+
 <template>
   <div class="min-h-screen bg-base-200" :data-theme="currentTheme">
     <header class="navbar bg-primary text-primary-content">
@@ -6,8 +23,16 @@
       </div>
       <div class="navbar-center">
         <ul class="menu menu-horizontal flex">
-          <li><NuxtLink to="/">Home</NuxtLink></li>
-          <li><NuxtLink to="/about">About</NuxtLink></li>
+          <li>
+            <NuxtLink to="/">
+              Home
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink to="/about">
+              About
+            </NuxtLink>
+          </li>
         </ul>
       </div>
       <div class="navbar-end">
@@ -37,20 +62,3 @@
     </footer>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-
-const currentTheme = ref('light');
-
-const setTheme = (theme) => {
-  currentTheme.value = theme;
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
-};
-
-onMounted(() => {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  setTheme(savedTheme);
-});
-</script>

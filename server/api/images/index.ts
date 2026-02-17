@@ -1,7 +1,8 @@
+import { randomUUID } from 'crypto';
+import { and, eq } from 'drizzle-orm';
+
 import db from '../../../lib/db';
 import { images } from '../../../lib/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { randomUUID } from 'crypto';
 
 export default defineEventHandler(async (event) => {
   const method = getMethod(event);
@@ -27,14 +28,14 @@ export default defineEventHandler(async (event) => {
     const allImages = await db
       .select()
       .from(images)
-      .where(and(eq(images.logId, parseInt(logId as string)), eq(images.userId, userId)));
+      .where(and(eq(images.logId, Number.parseInt(String(logId))), eq(images.userId, userId)));
     return allImages;
   }
 
   if (method === 'POST') {
     const formData = await readFormData(event);
-    const file = formData.get('file') as File;
-    const logId = formData.get('logId') as string;
+    const file = formData.get('file');
+    const logId = formData.get('logId');
 
     if (!file || !logId) {
       throw createError({
@@ -71,7 +72,7 @@ export default defineEventHandler(async (event) => {
     const newImage = await db
       .insert(images)
       .values({
-        logId: parseInt(logId),
+        logId: Number.parseInt(logId as string),
         url,
         userId,
         createdAt: new Date(),

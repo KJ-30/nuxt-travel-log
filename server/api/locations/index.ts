@@ -1,6 +1,7 @@
-import db from '../../../lib/db';
-import { locations } from '../../../lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { desc, eq } from "drizzle-orm";
+
+import db from "../../../lib/db";
+import { locations } from "../../../lib/db/schema";
 
 export default defineEventHandler(async (event) => {
   const method = getMethod(event);
@@ -50,4 +51,4 @@ export default defineEventHandler(async (event) => {
     statusCode: 405,
     statusMessage: 'Method not allowed',
   });
-});
+})

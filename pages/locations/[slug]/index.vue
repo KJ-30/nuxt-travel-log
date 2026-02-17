@@ -1,7 +1,25 @@
+<script setup>
+const route = useRoute();
+const slug = route.params.slug;
+
+const { data: location, pending, error } = await useFetch(`/api/locations/slug/${slug}`);
+const { data: logs, pending: logsPending } = await useFetch("/api/logs", {
+  query: { locationId: computed(() => location.value?.id) },
+})
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString()
+}
+
+definePageMeta({
+  middleware: ["auth"]
+});
+</script>
+
 <template>
   <div class="min-h-screen bg-base-200">
     <div class="drawer lg:drawer-open">
-      <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+      <input id="my-drawer-2" type="checkbox" class="drawer-toggle">
       <div class="drawer-content flex flex-col">
         <div class="navbar bg-base-100 shadow-sm">
           <div class="flex-none lg:hidden">
@@ -26,7 +44,7 @@
 
         <div class="flex-1 p-6">
           <div v-if="pending" class="flex justify-center items-center h-64">
-            <span class="loading loading-spinner loading-lg"></span>
+            <span class="loading loading-spinner loading-lg" />
           </div>
 
           <div v-else-if="error" class="alert alert-error">
@@ -37,8 +55,12 @@
           <div v-else class="space-y-6">
             <div class="card bg-base-100 shadow-sm">
               <div class="card-body">
-                <h1 class="text-3xl font-bold mb-2">{{ location.name }}</h1>
-                <p v-if="location.description" class="text-base-content/70">{{ location.description }}</p>
+                <h1 class="text-3xl font-bold mb-2">
+                  {{ location.name }}
+                </h1>
+                <p v-if="location.description" class="text-base-content/70">
+                  {{ location.description }}
+                </p>
                 <div v-if="location.latitude && location.longitude" class="flex gap-2 mt-4">
                   <div class="badge badge-ghost">
                     <Icon name="tabler:map-pin" size="14" />
@@ -49,7 +71,9 @@
             </div>
 
             <div class="flex justify-between items-center">
-              <h2 class="text-xl font-semibold">Logs</h2>
+              <h2 class="text-xl font-semibold">
+                Logs
+              </h2>
               <NuxtLink :to="`/locations/${slug}/logs/new`" class="btn btn-primary btn-sm">
                 <Icon name="tabler:plus" size="16" />
                 Add Log
@@ -57,12 +81,14 @@
             </div>
 
             <div v-if="logsPending" class="flex justify-center items-center h-32">
-              <span class="loading loading-spinner loading-lg"></span>
+              <span class="loading loading-spinner loading-lg" />
             </div>
 
             <div v-else-if="logs.length === 0" class="text-center py-8">
               <Icon name="tabler:book" size="48" class="text-base-content/30 mb-2" />
-              <p class="text-base-content/60 mb-4">No logs yet</p>
+              <p class="text-base-content/60 mb-4">
+                No logs yet
+              </p>
               <NuxtLink :to="`/locations/${slug}/logs/new`" class="btn btn-primary btn-sm">
                 <Icon name="tabler:plus" size="16" />
                 Add Log
@@ -77,7 +103,9 @@
                 @click="navigateTo(`/logs/${log.id}`)"
               >
                 <div class="card-body">
-                  <h3 class="card-title">{{ log.title }}</h3>
+                  <h3 class="card-title">
+                    {{ log.title }}
+                  </h3>
                   <p v-if="log.description" class="text-sm text-base-content/70 line-clamp-2">
                     {{ log.description }}
                   </p>
@@ -91,7 +119,7 @@
         </div>
       </div>
       <div class="drawer-side">
-        <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
+        <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay" />
         <ul class="menu p-4 w-80 min-h-full bg-base-200">
           <li>
             <NuxtLink to="/dashboard" class="flex items-center gap-2">
@@ -105,7 +133,7 @@
               Locations
             </NuxtLink>
           </li>
-          <div class="divider"></div>
+          <div class="divider" />
           <li v-if="location">
             <NuxtLink :to="`/locations/${slug}`" class="flex items-center gap-2 active">
               <Icon name="tabler:map-pin" size="20" />
@@ -118,7 +146,7 @@
               Edit Location
             </a>
           </li>
-          <div class="divider"></div>
+          <div class="divider" />
           <li v-for="log in logs" :key="log.id">
             <NuxtLink :to="`/logs/${log.id}`" class="flex items-center gap-2">
               <Icon name="tabler:book" size="18" />
@@ -130,21 +158,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-const route = useRoute();
-const slug = route.params.slug;
-
-const { data: location, pending, error } = await useFetch(`/api/locations/slug/${slug}`);
-const { data: logs, pending: logsPending } = await useFetch("/api/logs", {
-  query: { locationId: computed(() => location.value?.id) }
-});
-
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString();
-};
-
-definePageMeta({
-  middleware: ["auth"]
-});
-</script>

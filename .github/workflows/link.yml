@@ -1,6 +1,6 @@
 name: Link
 
-on: 
+on:
   pull_request:
     branches:
       - main
@@ -19,6 +19,6 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: 22.x
       - run: pnpm install
       - run: pnpm lint

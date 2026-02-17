@@ -1,14 +1,45 @@
-name: Deploy to Vercel
+name: Test and Deploy to Vercel
 
 on:
   push:
     branches:
       - main
       - feature/travel-log-complete
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  test:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run lint
+        run: pnpm run lint || true
+
+      - name: Build project
+        run: pnpm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/travel-log-complete')
 
     steps:
       - name: Checkout code
